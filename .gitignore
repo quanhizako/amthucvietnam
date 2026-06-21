@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Biến môi trường - chứa mật khẩu, KHÔNG đẩy lên GitHub
+.env
+
+# Log
+npm-debug.log*
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
