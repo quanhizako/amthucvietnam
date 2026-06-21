@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ẩm Thực Việt Nam</title>
+    <link rel="stylesheet" href="BTLl.css">
+</head>
+
+<body>
+
+    <header id="home">
+        <div class="hero-content">
+            <p class="hero-eyebrow">VN - Khám phá hương vị đất nước</p>
+            <h1 class="hero-title">
+                🍜 Ẩm Thực <br>
+                <span>Việt Nam 🍜</span>
+            </h1>
+            <p class="hero-eyebrow">Hành trình qua những hương vị tinh tế từ Bắc đến Nam</p>
+            <button onclick="scrollToSection('menu')">Khám phá ngay</button>
+        </div>
+    </header>
+
+    <nav id="menu">
+        <div class="nav-links">
+            <a href="#" onclick="locMonAn('all'); return false;">Trang Chủ</a>
+            <a href="#" onclick="locMonAn('bac'); return false;">Món Miền Bắc</a>
+            <a href="#" onclick="locMonAn('trung'); return false;">Món Miền Trung</a>
+            <a href="#" onclick="locMonAn('nam'); return false;">Món Miền Nam</a>
+            <a href="#" onclick="xemYeuThich(); return false;">❤️ Yêu Thích</a>
+        </div>
+        <div class="nav-auth">
+            <div id="authGuestBox" class="auth-guest-box">
+                <button type="button" class="auth-btn auth-btn-outline" onclick="openAuthModal('login')">Đăng nhập</button>
+                <button type="button" class="auth-btn" onclick="openAuthModal('register')">Đăng ký</button>
+            </div>
+            <div id="authUserBox" class="auth-user-box" style="display:none;">
+                <span id="authUsername"></span>
+                <button type="button" class="auth-btn auth-btn-outline" onclick="handleLogout()">Đăng xuất</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Tìm món ăn..." onkeyup="timKiemMonAn()">
+    </div>
+
+    <div class="container">
+        <div class="food-list" id="foodList">
+            <p style="text-align:center; grid-column:1/-1;">⏳ Đang tải danh sách món ăn...</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>Website giới thiệu món ăn Việt Nam</p>
+    </footer>
+
+    <!-- Chi tiết món ăn -->
+    <section id="chiTietPage" style="display: none;">
+        <div class="detail-container">
+            <button type="button" class="btn" onclick="quayLai()">← Quay lại</button>
+            <h1 id="detailTitle"></h1>
+            <img id="detailImage">
+            <div class="info-box">
+                <p><b>⭐ Đánh giá:</b> <span id="detailRating"></span></p>
+                <p><b>📍 Xuất xứ:</b> <span id="detailOrigin"></span></p>
+                <p><b>💰 Giá tham khảo:</b> <span id="detailPrice"></span></p>
+                <p><b>🥗 Thành phần:</b> <span id="detailIngredient"></span></p>
+            </div>
+            <h2>Giới thiệu</h2>
+            <p id="detailContent"></p>
+            <h2>Lịch sử</h2>
+            <p id="detailHistory"></p>
+        </div>
+    </section>
+
+    <!-- Chatbot Gemini AI -->
+    <div class="chatbot-container">
+        <button id="chatToggle" class="chat-toggle" title="Chat với AI">💬</button>
+
+        <div id="chatBox" class="chat-box">
+            <div class="chat-header">
+                <div style="width:28px;"></div>
+                <span class="chat-header-title">🤖 Trợ lý Ẩm thực AI</span>
+                <button class="reset-key-btn" onclick="resetApiKey()" title="Đổi API Key">🔑</button>
+            </div>
+
+            <div id="chatMessages" class="chat-messages">
+                <div class="bot-message">
+                    Xin chào! Tôi là trợ lý ẩm thực AI 🍜<br>
+                    Hãy nhập <b>Gemini API Key</b> để bắt đầu hỏi về các món ăn Việt Nam nhé!
+                </div>
+            </div>
+
+            <!-- Phần nhập API Key -->
+            <div id="apiKeySection" style="display:none;">
+                <p>
+                    Lấy key miễn phí tại
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> 🔗
+                </p>
+                <div class="key-input-row">
+                    <input type="password" id="geminiKeyInput" placeholder="Dán Gemini API Key vào đây...">
+                    <button id="toggleKeyBtn" onclick="toggleShowKey()" title="Hiện/ẩn key">👁️</button>
+                </div>
+                <button class="key-save-btn" onclick="saveApiKey()">✅ Kết nối AI</button>
+            </div>
+
+            <!-- Ô nhập tin nhắn -->
+            <div id="chatInputArea" class="chat-input" style="display:none;">
+                <input type="text" id="userInput" placeholder="Hỏi về món ăn Việt Nam..." onkeypress="handleEnter(event)">
+                <button onclick="guiTinNhan()">Gửi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Đăng nhập / Đăng ký -->
+    <div id="authOverlay" class="auth-overlay" onclick="if(event.target===this) closeAuthModal()">
+        <div class="auth-modal">
+            <button type="button" class="auth-close" onclick="closeAuthModal()">×</button>
+            <div class="auth-tabs">
+                <button type="button" id="tabLogin" class="auth-tab active" onclick="switchAuthTab('login')">Đăng nhập</button>
+                <button type="button" id="tabRegister" class="auth-tab" onclick="switchAuthTab('register')">Đăng ký</button>
+            </div>
+            <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)">
+                <input type="text" id="loginUsername" placeholder="Tên đăng nhập" required>
+                <input type="password" id="loginPassword" placeholder="Mật khẩu" required>
+                <p id="loginError" class="auth-error"></p>
+                <button type="submit" class="auth-submit">Đăng nhập</button>
+            </form>
+            <form id="registerForm" class="auth-form" style="display:none;" onsubmit="handleRegister(event)">
+                <input type="text" id="registerUsername" placeholder="Tên đăng nhập (tối thiểu 3 ký tự)" required>
+                <input type="email" id="registerEmail" placeholder="Email" required>
+                <input type="password" id="registerPassword" placeholder="Mật khẩu (tối thiểu 6 ký tự)" required>
+                <input type="password" id="registerConfirm" placeholder="Xác nhận mật khẩu" required>
+                <p id="registerError" class="auth-error"></p>
+                <button type="submit" class="auth-submit">Đăng ký</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="BTLL.js"></script>
+
+</body>
+</html>
